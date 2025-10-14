@@ -1,0 +1,57 @@
+campaign_name: "APT29-Simulated-Campaign"
+campaign_id: "AEF-2026-001"
+description: "Multi-stage automated emulation playbook mapped to MITRE ATT&CK tactics"
+
+stages:
+  - name: "Initial Discovery"
+    tactic: "Discovery"
+    modules:
+      - module: "system_profile"
+        technique_id: "T1082"
+        parameters: {}
+      - module: "user_enum"
+        technique_id: "T1087"
+        parameters: {"include_domain": true}
+      - module: "network_connections"
+        technique_id: "T1049"
+        parameters: {}
+
+  - name: "Credential Access"
+    tactic: "Credential Access"
+    modules:
+      - module: "lsass_dump_access"
+        technique_id: "T1003.001"
+        parameters: {"access_mask": "0x1010"}
+      - module: "dpapi_query"
+        technique_id: "T1003.001"
+        parameters: {"context": "current_user"}
+
+  - name: "Lateral Movement"
+    tactic: "Lateral Movement"
+    modules:
+      - module: "wmiprvse_dispatch"
+        technique_id: "T1047"
+        parameters: {"command": "whoami /all"}
+      - module: "smb_admin_share"
+        technique_id: "T1021.002"
+        parameters: {"target_host": "DC01.corp.local", "share": "ADMIN$"}
+
+  - name: "Persistence"
+    tactic: "Persistence"
+    modules:
+      - module: "registry_runkey"
+        technique_id: "T1547.001"
+        parameters: {"key_name": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"}
+      - module: "scheduled_task"
+        technique_id: "T1053.005"
+        parameters: {"task_name": "MicrosoftUpdateTask", "schedule": "hourly"}
+
+  - name: "Defense Evasion"
+    tactic: "Defense Evasion"
+    modules:
+      - module: "amsi_patch_sim"
+        technique_id: "T1562.001"
+        parameters: {"subsystem": "AmsiScanBuffer"}
+      - module: "process_hollowing_telemetry"
+        technique_id: "T1055"
+        parameters: {"template_process": "C:\\Windows\\System32\\svchost.exe"}

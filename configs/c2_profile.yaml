@@ -1,0 +1,37 @@
+profile_name: "APT29-Simulated"
+description: "Malleable C2 HTTP profile simulating APT29 (Cozy Bear) communications"
+
+transport:
+  protocol: http
+  host: "{{callback_host}}"
+  port: 443
+  uri: "/api/v2/telemetry"
+  method: POST
+
+encoding:
+  format: base64
+  encryption: aes256gcm
+  key_exchange: rsa_oaep
+
+sleep:
+  base_seconds: 60
+  jitter_percent: 35
+
+headers:
+  Host: "api.telemetry-cdn.com"
+  User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  Content-Type: "application/octet-stream"
+  Accept: "application/json"
+  X-Request-ID: "{{random_uuid}}"
+
+malleable:
+  append_headers:
+    X-Correlation-ID: "{{random_uuid}}"
+  prepend_junk: 128
+  postpend_junk: 64
+  chunk_transfer: false
+
+session:
+  key_size: 32
+  iv_size: 16
+  tag_size: 16
