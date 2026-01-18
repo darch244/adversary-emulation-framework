@@ -1,0 +1,26 @@
+title: Registry Run Key Persistence
+id: 7d1c4a9e-2b8f-4c3d-a6e4-9f0b1a5c7d8e
+status: stable
+description: Detects the creation of an autostart entry under the HKCU Run registry key, a persistent malware install vector.
+references:
+  - https://attack.mitre.org/techniques/T1547/001/
+author: Mostafa Ibrahim (DarcHacker)
+date: 2026/01/01
+modified: 2026/01/01
+tags:
+  - attack.t1547
+  - attack.persistence
+logsource:
+  product: windows
+  category: registry_set
+detection:
+  selection:
+    EventID: 13
+    TargetObject|startswith: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Run\'
+  condition: selection
+fields:
+  - TargetObject
+  - Image
+falsepositives:
+  - Legitimate application autostart configuration
+level: high

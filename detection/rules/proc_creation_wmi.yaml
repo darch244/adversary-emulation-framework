@@ -1,0 +1,29 @@
+title: Suspicious WMI Process Creation
+id: 5b390a4f-2e8d-4b74-9f2b-5c7d9d2e8a1f
+status: stable
+description: Detects WMI-backed process execution via wmiprvse.exe dispatching suspicious command lines.
+references:
+  - https://attack.mitre.org/techniques/T1047/
+author: Mostafa Ibrahim (DarcHacker)
+date: 2026/01/01
+modified: 2026/01/01
+tags:
+  - attack.t1047
+  - attack.lateral_movement
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    EventID: 1
+    Image|endswith: '\WmiPrvSE.exe'
+  filter_benign:
+    CommandLine|contains: 'svchost.exe'
+  condition: selection and not filter_benign
+fields:
+  - CommandLine
+  - Image
+  - User
+falsepositives:
+  - Legitimate WMI operations by administrators
+level: high
